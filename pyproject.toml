@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "recruitment-app"
+version = "0.1.0"
+description = ""
+authors = ["Wioletta Wajda <wioletta.wajda@devsoft.pl>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.2.4"
+black = "^25.1.0"
+isort = "^6.0.1"
+flake8 = "^7.3.0"
+django-environ = "^0.12.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+exclude = '''
+
+(
+  /(
+    | \.git
+    | migrations
+    | \.env
+  )/
+)
+'''
+
+[tool.isort]
+skip = [".git", "migrations", ".env"]
+profile = "black"
