@@ -61,14 +61,19 @@ class Command(BaseCommand):
 
         User.objects.bulk_create(new_users, batch_size=1000)
 
-        self._save_to_csv(
-            "clients_with_duplicated_phones.csv",
-            ["client_id", "phone"],
-            list(client_with_duplicated_phones.items()),
-        )
-        self._save_to_csv(
-            "subscriber_conflicts.csv", ["subscriber_id", "email"], subscriber_conflicts
-        )
+        if client_with_duplicated_phones:
+            self._save_to_csv(
+                "clients_with_duplicated_phones.csv",
+                ["client_id", "phone"],
+                list(client_with_duplicated_phones.items()),
+            )
+
+        if subscriber_conflicts:
+            self._save_to_csv(
+                "subscriber_conflicts.csv",
+                ["subscriber_id", "email"],
+                subscriber_conflicts,
+            )
 
     def migrate_subscribers_sms(self):
         subscriber_sms_conflicts = []
@@ -109,11 +114,12 @@ class Command(BaseCommand):
 
         User.objects.bulk_create(new_users, batch_size=100)
 
-        self._save_to_csv(
-            "subscriber_sms_conflicts.csv",
-            ["subscriber_sms_id", "phone"],
-            subscriber_sms_conflicts,
-        )
+        if subscriber_sms_conflicts:
+            self._save_to_csv(
+                "subscriber_sms_conflicts.csv",
+                ["subscriber_sms_id", "phone"],
+                subscriber_sms_conflicts,
+            )
 
     @staticmethod
     def _save_to_csv(filename: str, header: list[str], data: list[tuple[Any, Any]]):
