@@ -9,7 +9,8 @@ from users.models import Client, Subscriber, SubscriberSMS, User
 
 
 class MigrateSubscribersTestCase(TestCase):
-    def test_migrate_subscribers_creates_users(self):
+    @patch("users.management.commands.migrate_subscribers.Command._save_to_csv")
+    def test_migrate_subscribers_creates_users(self, mock_save_to_csv):
         Client.objects.create(email="client@example.com", phone="123")
         Subscriber.objects.create(email="client@example.com", gdpr_consent=True)
         Subscriber.objects.create(email="new@example.com", gdpr_consent=False)
@@ -20,6 +21,7 @@ class MigrateSubscribersTestCase(TestCase):
             User.objects.filter(email="client@example.com", phone="123").exists()
         )
         self.assertTrue(User.objects.filter(email="new@example.com").exists())
+        self.assertEqual(mock_save_to_csv.call_count, 0)
 
     @patch("users.management.commands.migrate_subscribers.Command._save_to_csv")
     def test_migrate_subscribers_with_duplicated_phones(self, mock_save_to_csv):
@@ -53,7 +55,8 @@ class MigrateSubscribersTestCase(TestCase):
 
 
 class MigrateSubscribersSMSTestCase(TestCase):
-    def test_migrate_subscribers_sms_creates_users(self):
+    @patch("users.management.commands.migrate_subscribers.Command._save_to_csv")
+    def test_migrate_subscribers_sms_creates_users(self, mock_save_to_csv):
         Client.objects.create(email="sms@example.com", phone="888")
         SubscriberSMS.objects.create(phone="888", gdpr_consent=True)
         SubscriberSMS.objects.create(phone="777", gdpr_consent=False)
@@ -64,6 +67,7 @@ class MigrateSubscribersSMSTestCase(TestCase):
             User.objects.filter(phone="888", email="sms@example.com").exists()
         )
         self.assertTrue(User.objects.filter(phone="777").exists())
+        self.assertEqual(mock_save_to_csv.call_count, 0)
 
     @patch("users.management.commands.migrate_subscribers.Command._save_to_csv")
     def test_migrate_subscribers_sms_with_conflicts(self, mock_save_to_csv):
