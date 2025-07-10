@@ -15,7 +15,7 @@ To get this project up and running locally, follow these steps:
 1. Clone the repository:
 
 ```bash
-clone: git clone git@github.com:w-wajda/recruitment-app.git
+git clone git@github.com:w-wajda/recruitment-app.git
 ```
 
 2. Install dependencies with Poetry:
